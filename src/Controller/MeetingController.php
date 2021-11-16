@@ -12,6 +12,12 @@ class MeetingController extends AbstractController
 	{
 		return $this->render('meeting/index.html.twig');
 	}
+
+	#[Route('/ajout', name: 'meeting.add')]
+	public function add(): Response
+	{
+		return $this->render('meeting/add.html.twig');
+	}
 }
 
 

@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %} 
+	<div class="container-md">
+		<div class="row">
+			<div class="col-md-12">
+				<h1>Ajouter une journée découverte</h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<form>
+					<div class="form-group">
+						<label for="niveau">Selection du niveau :</label>
+						<select class="form-control" id="niveau">
+							<option>Choix du niveau</option>
+							<option>Bronze</option>
+							<option>Argent</option>
+							<option>Or</option>
+						</select>
+					</div>
+					<div class="form-group mt-3">
+						<label for="lieu">Adresse du lieu de la journée découverte</label>
+						<input type="text" class="form-control" name="lieu" id="lieu">
+					</div>
+
+					<div class="form-group mt-3">
+						<label for="limite">Nombre maximum de participants</label>
+						<input type="number" class="form-control" name="limite" id="limite">
+					</div>
+
+					<div class="form-group mt-3">
+						<label for="limite">Date de la journée découverte</label>
+						<input type="date" class="form-control" name="limite" id="limite">
+					</div>
+
+					<div class="form-group mt-3">
+						<label for="exampleFormControlFile1">Image de la journée découverte</label>
+						<input type="file" class="form-control-file" id="exampleFormControlFile1">
+					</div>
+					
+				</form>
+			</div>
+		</div>
+	</div>
+	
+{% endblock %}
