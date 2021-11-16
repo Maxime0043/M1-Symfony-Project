@@ -19,4 +19,10 @@ class ClimberController extends AbstractController
   public function register(): Response {
      return $this->render('climber/register.html.twig');
   }
+  
+  #[Route('/my-account', name: 'climber.account')]
+
+  public function account(): Response {
+     return $this->render('climber/account.html.twig');
+  }
 }
