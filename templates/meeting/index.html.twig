@@ -3,5 +3,13 @@
 {% block title %}Accueil{% endblock %}
 
 {% block body %} 
-	<a class="btn btn-primary" href="{{url('meeting.add')}}" role="button">Ajouter</a>
+
+	<div class="container-fluid">
+		<div class="row mt-5">
+			<div class="col-md-2 offset-2">
+				<a class="btn btn-primary" href="{{url('meeting.add')}}" role="button">Ajouter</a>
+			</div>
+		</div>
+	</div>
+	
 {% endblock %}
