@@ -8,21 +8,21 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ClimberController extends AbstractController
 {
-//   #[Route('/login', name: 'climber.login')]
+   #[Route('/register', name: 'climber.register')]
 
-//   public function login(): Response {
-//      return $this->render('climber/login.html.twig');
-//   }
-  
-  #[Route('/register', name: 'climber.register')]
+   public function register(): Response
+   {
+      return $this->render('climber/register.html.twig');
+   }
 
-  public function register(): Response {
-     return $this->render('climber/register.html.twig');
-  }
-  
-  #[Route('/my-account', name: 'climber.account')]
+   #[Route('/my-account', name: 'climber.account')]
 
-  public function account(): Response {
-     return $this->render('climber/account.html.twig');
-  }
+   public function account(): Response
+   {
+      if ($this->isGranted('IS_AUTHENTIFICATED_FULLY')) {
+         return $this->render('climber/account.html.twig');
+      }
+
+      return new RedirectResponse($this->urlGenerator->generate('meeting.index'));
+   }
 }
