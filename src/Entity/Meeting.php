@@ -44,6 +44,12 @@ class Meeting
     #[ORM\OneToMany(mappedBy: 'meeting', targetEntity: Comment::class, orphanRemoval: true)]
     private $comments;
 
+    #[ORM\Column(type: 'string', length: 255)]
+    private $title;
+
+    #[ORM\Column(type: 'text')]
+    private $description;
+
     public function __construct()
     {
         $this->climberMeetings = new ArrayCollection();
@@ -214,6 +220,30 @@ class Meeting
                 $comment->setMeeting(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }
