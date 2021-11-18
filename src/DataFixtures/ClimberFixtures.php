@@ -27,25 +27,18 @@ class ClimberFixtures extends Fixture implements OrderedFixtureInterface
         $roles = $this->levelRepository->findAll();
         $role = $roles[array_rand($roles)];
 
-
-
         $climber = new Climber;
         $climber
             ->setLastname("Lee")
             ->setFirstname("Grimpeur")
             ->setEmail("leegrimpeur@test.com")
             ->setPassword('$2y$13$ZLZC/JIEere8FvxVJfkXZOy4Yj4JUcIQG1LhVNYQlJuoSsF5QJvCG') //lamachine
-            ->setPoints(30);
-
-        $climber->setRoles(
-            $role
-
-        );
-
+            ->setPoints(30)
+            ->setRoles($role);
 
         $manager->persist($climber);
 
-        /*$roles = $this->levelRepository->findAll();
+        $roles = $this->levelRepository->findAll();
         $roles = $roles[array_rand($roles)];
 
         $climber = new Climber;
@@ -54,7 +47,7 @@ class ClimberFixtures extends Fixture implements OrderedFixtureInterface
             ->setFirstname("Jean")
             ->setEmail("jeanpaul@test.com")
             ->setPassword('$2y$13$ZLZC/JIEere8FvxVJfkXZOy4Yj4JUcIQG1LhVNYQlJuoSsF5QJvCG') //lamachine
-            ->addRole($roles)
+            ->setRoles($roles)
             ->setPoints(0);
 
         $manager->persist($climber);
@@ -68,10 +61,10 @@ class ClimberFixtures extends Fixture implements OrderedFixtureInterface
             ->setFirstname("Martin")
             ->setEmail("martingeorge@test.com")
             ->setPassword('$2y$10$wyVV2ExjB8EcdJ6Yac2EJOKPQ1sqFP5AU5tift/XtDYk7EW8yYDye4') //lamachine
-            ->addRole($roles)
+            ->setRoles($roles)
             ->setPoints(15);
 
-        $manager->persist($climber);*/
+        $manager->persist($climber);
 
         $manager->flush();
     }

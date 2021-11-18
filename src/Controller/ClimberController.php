@@ -20,7 +20,12 @@ class ClimberController extends AbstractController
    public function account(): Response
    {
       if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
-         return $this->render('climber/account.html.twig');
+         $roles = explode('_', $this->getUser()->getRoles()[0]);
+         $picture = strtolower($roles[1]);
+
+         return $this->render('climber/account.html.twig', [
+            'picture'   => $picture
+         ]);
       }
 
       return new RedirectResponse($this->urlGenerator->generate('meeting.index'));

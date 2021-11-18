@@ -12,7 +12,7 @@
         <h2 class="mb-0">{{ app.user.lastname }}</h2>
         <h2 class="mt-0">{{ app.user.firstname }}</h2>
 
-        <img src="./icons/silver.png" alt="" height="75" />
+        <img src="./icons/{{ picture }}.png" alt="" height="75" />
       </div>
 
       <div class="col-md-8">
@@ -32,6 +32,11 @@
               <tr>
                 <th scope="row">Email</th>
                 <td>{{ app.user.email }}</td>
+              </tr>
+
+              <tr>
+                <th scope="row">Nombre de points</th>
+                <td>{{ app.user.points }}</td>
               </tr>
             </tbody>
           </table>
