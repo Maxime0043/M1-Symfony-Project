@@ -16,7 +16,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-class LogInFormAuthentificatorAuthenticator extends AbstractLoginFormAuthenticator
+class LogInFormAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 

@@ -3,19 +3,18 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ClimberController extends AbstractController
 {
-   #[Route('/register', name: 'climber.register')]
-
-   public function register(): Response
+   function __construct(private UrlGeneratorInterface $urlGenerator)
    {
-      return $this->render('climber/register.html.twig');
    }
 
-   #[Route('/my-account', name: 'climber.account')]
+   #[Route('/account', name: 'climber.account')]
 
    public function account(): Response
    {
