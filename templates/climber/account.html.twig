@@ -9,10 +9,10 @@
 
     <div class="row mt-4">
       <div class="col-md section d-flex flex-column align-items-center justify-content-center me-2">
-        <h2 class="mb-0">NOM</h2>
-        <h2 class="mt-0">Prénom</h2>
+        <h2 class="mb-0">{{ app.user.lastname }}</h2>
+        <h2 class="mt-0">{{ app.user.firstname }}</h2>
 
-        <img src="./icons/gold.png" alt="" height="75" />
+        <img src="./icons/silver.png" alt="" height="75" />
       </div>
 
       <div class="col-md-8">
@@ -21,17 +21,17 @@
             <tbody>
               <tr>
                 <th scope="row">Nom</th>
-                <td>NOM</td>
+                <td>{{ app.user.lastname }}</td>
               </tr>
               
               <tr>
                 <th scope="row">Prénom</th>
-                <td>PRENOM</td>
+                <td>{{ app.user.firstname }}</td>
               </tr>
 
               <tr>
                 <th scope="row">Email</th>
-                <td>EMAIL</td>
+                <td>{{ app.user.email }}</td>
               </tr>
             </tbody>
           </table>

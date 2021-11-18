@@ -13,22 +13,19 @@ class LevelFixtures extends Fixture
         $level = new Level;
         $level
             ->setName("Bronze")
-            ->setPointsNeeded(0)
-        ;
+            ->setPointsNeeded(0);
         $manager->persist($level);
 
         $level = new Level;
         $level
             ->setName("Argent")
-            ->setPointsNeeded(10)
-        ;
+            ->setPointsNeeded(10);
         $manager->persist($level);
 
         $level = new Level;
         $level
             ->setName("Or")
-            ->setPointsNeeded(30)
-        ;
+            ->setPointsNeeded(30);
         $manager->persist($level);
 
         $manager->flush();

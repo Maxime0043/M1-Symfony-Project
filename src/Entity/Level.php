@@ -24,9 +24,14 @@ class Level
     #[ORM\OneToMany(mappedBy: 'level', targetEntity: Meeting::class, orphanRemoval: true)]
     private $meetings;
 
+    #[ORM\OneToMany(targetEntity: Climber::class, mappedBy: 'roles')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $climbers;
+
     public function __construct()
     {
         $this->meetings = new ArrayCollection();
+        $this->climbers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -86,5 +91,13 @@ class Level
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection|Climber[]
+     */
+    public function getClimbers(): Collection
+    {
+        return $this->climbers;
     }
 }

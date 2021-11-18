@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\LevelRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,7 +11,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ClimberController extends AbstractController
 {
-   function __construct(private UrlGeneratorInterface $urlGenerator)
+   function __construct(private UrlGeneratorInterface $urlGenerator, private LevelRepository $levelRepository)
    {
    }
 
@@ -18,7 +19,7 @@ class ClimberController extends AbstractController
 
    public function account(): Response
    {
-      if ($this->isGranted('IS_AUTHENTIFICATED_FULLY')) {
+      if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
          return $this->render('climber/account.html.twig');
       }
 
