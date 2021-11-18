@@ -9,11 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ClimberRepository::class)]
 
-#[ORM\Index(
-    columns: ['email'],
-    flags: ['unique']
-)]
-
 class Climber
 {
     #[ORM\Id]
@@ -26,12 +21,6 @@ class Climber
 
     #[ORM\Column(type: 'string', length: 255)]
     private $firstname;
-
-    #[ORM\Column(type: 'string', length: 255)]
-    private $email;
-
-    #[ORM\Column(type: 'string', length: 255)]
-    private $password;
 
     #[ORM\Column(type: 'integer')]
     private $points;
