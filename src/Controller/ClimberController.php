@@ -8,11 +8,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ClimberController extends AbstractController
 {
-  #[Route('/login', name: 'climber.login')]
+//   #[Route('/login', name: 'climber.login')]
 
-  public function login(): Response {
-     return $this->render('climber/login.html.twig');
-  }
+//   public function login(): Response {
+//      return $this->render('climber/login.html.twig');
+//   }
   
   #[Route('/register', name: 'climber.register')]
 

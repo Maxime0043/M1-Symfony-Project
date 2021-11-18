@@ -13,7 +13,7 @@ class UserFixtures extends Fixture
         $user = new User;
         $user
             ->setEmail("leegrimpeur@test.com")
-            ->setPassword('$2y$10$wyVV2ExjB8EcdJ6Yac2EJOKPQ1sqFP5AU5tift/XtDYk7EW8yYDye4') //lamachine
+            ->setPassword('$2y$13$ZLZC/JIEere8FvxVJfkXZOy4Yj4JUcIQG1LhVNYQlJuoSsF5QJvCG') //lamachine
             ->setRoles(['ROLE_USER'])
         ;
 
