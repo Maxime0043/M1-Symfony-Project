@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails d'une journée découverte{% endblock %}
+
+{% block body %}
+	<div class="container-md">
+		<div class="row mt-5">
+			<div class="col-md-2">
+				<a class="btn btn-primary" href="{{url('meeting.index')}}" role="button">Retour</a>
+			</div>
+		</div>
+
+		<div class="section mt-5">
+			<div class="row mt-3">
+				<div class="col-md-8">
+						<h1>{{meeting.title}}</h1>
+						<p>Formation proposé par {{ meeting.climber.lastname }} {{ meeting.climber.firstname }}</p>
+				</div>
+				<div class="col-md-4">
+					<img class="card-img-top"
+							src="{{ meeting.picture }}"
+							alt="Card image cap"
+							style="object-fit: contain"
+							height='250'
+					/>
+				</div>
+		</div>
+
+		<div class="row mt-1">
+				<h2>Description</h2>
+				<p>{{meeting.description}}</p>
+		</div>
+		</div>
+		
+
+		<!-- <hr class="solid"> -->
+		
+	</div>
+	
+{% endblock %}

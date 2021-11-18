@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Form\MeetingType;
 use App\Repository\MeetingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,13 +26,17 @@ class MeetingController extends AbstractController
 	#[Route('/ajout', name: 'meeting.add')]
 	public function add(): Response
 	{
-		return $this->render('meeting/add.html.twig');
+		return $this->render('meeting/add.html.twig', [
+			'formMeeting' => $this->createForm(MeetingType::class)->createView()
+		]);
 	}
 
 	#[Route('/meeting/{id}', name: 'meeting.detail')]
-	public function detail(): Response
+	public function detail(string $id): Response
 	{
-		return $this->render('meeting/add.html.twig');
+		return $this->render('meeting/detail.html.twig', [
+			'meeting' => $this->meetingRepository->findOneBy(array("id" => $id))
+		]);
 	}
 
 }
