@@ -1,24 +1,33 @@
 {% set current_path = app.request.get('_route') %}
 
 <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand ms-3" href="{{url('meeting.index')}}">Escalator</a>
+  <a class="navbar-brand ms-3" href="{{ url('meeting.index') }}">Escalator</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
+  <div class="collapse navbar-collapse d-flex flex-row justify-content-between" id="navbarNav">
     <ul class="navbar-nav">
       <li class="nav-item active">
-        <a class="nav-link {% if current_path == 'meeting.index' %}active{% endif %}" href="{{url('meeting.index')}}">Journées découvertes</a>
+        <a class="nav-link {% if current_path == 'meeting.index' %}active{% endif %}" href="{{ url('meeting.index') }}">Journées découvertes</a>
       </li>
-      <li class="nav-item active">
-        <a class="nav-link {% if current_path == 'security.login' %}active{% endif %}" href="{{url('security.login')}}">Connexion</a>
-      </li>
-      <li class="nav-item active">
-        <a class="nav-link {% if current_path == 'security.register' %}active{% endif %}" href="{{url('security.register')}}">Inscription</a>
-      </li>
-      <li class="nav-item active">
-        <a class="nav-link {% if current_path == 'climber.account' %}active{% endif %}" href="{{url('climber.account')}}">Mon Compte</a>
-      </li>
+    </ul>
+
+    <ul class="navbar-nav align-items-center">
+      {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
+        <li class="nav-item active">
+          <a class="nav-link {% if current_path == 'security.login' %}active{% endif %}" href="{{ url('security.login') }}">Connexion</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link {% if current_path == 'security.register' %}active{% endif %}" href="{{ url('security.register') }}">Inscription</a>
+        </li>
+      {% else %}
+        <li class="nav-item active">
+          <a class="nav-link {% if current_path == 'climber.account' %}active{% endif %}" href="{{ url('climber.account') }}">Mon Compte</a>
+        </li>
+        <li class="nav-item active">
+          <a class="btn btn-danger btn-sm" href="{{ url('security.logout') }}">Se Déconnecter</a>
+        </li>
+      {% endif %}
     </ul>
   </div>
 </nav>
