@@ -12,9 +12,14 @@
 
 		<div class="section mt-4">
 			<div class="row mt-3">
-				<div class="col-md-8">
+				<div class="col-md-4">
 						<h1>{{ meeting.title }}</h1>
-						<p>Formation proposé par {{ meeting.climber.lastname }} {{ meeting.climber.firstname }}</p>
+						<p>Journée découverte proposé par {{ meeting.climber.lastname }} {{ meeting.climber.firstname }}</p>
+						<h4>Le {{ meeting.date | date("d/m/Y") }}</h4>
+						<h5>à {{ meeting.date | date("H:i") }}</h5>
+				</div>
+				<div class="col-md-4">
+					<img src="../icons/{{ meeting.level.name | lower }}.png" alt="" height="75" />
 				</div>
 
 				<div class="col-md-4">
@@ -30,6 +35,12 @@
 			<div class="row mt-1">
 					<h2>Description</h2>
 					<p>{{ meeting.description }}</p>
+			</div>
+
+			<div class="row mt-1">
+				<div class="col-md-1">
+					<a class="btn btn-success" href="{{url('climber.participate', { id: meeting.id} )}}">S'inscrire</a>
+				</div>
 			</div>
 		</div>
 
