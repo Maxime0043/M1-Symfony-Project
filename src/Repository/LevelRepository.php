@@ -28,6 +28,14 @@ class LevelRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function getLevels()
+    {
+        return $this->createQueryBuilder('l')
+            ->orderBy('l.points_needed', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return Level[] Returns an array of Level objects
     //  */

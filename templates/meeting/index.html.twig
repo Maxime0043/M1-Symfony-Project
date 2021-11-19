@@ -15,7 +15,10 @@
 
 		<ul class="list-group mt-2 my-4">
 			{% for message in app.flashes('meetingParticipationError') %}
-				<li class="list-group-item list-group-item-danger">{{ message|trans|nl2br }}</li>
+				<li class="list-group-item list-group-item-danger">{{ message }}</li>
+    	{% endfor %}
+			{% for message in app.flashes('meetingParticipationSuccess') %}
+				<li class="list-group-item list-group-item-success">{{ message }}</li>
     	{% endfor %}
 		</ul>
 
@@ -50,7 +53,7 @@
 										<h5 class="mt-1">{{ meeting.date|date("d/m/Y") }}</h5>
 									</div>
 								</div>
-								<div class="d-flex justify-content-between align-items-center mt-auto">
+								<div class="d-flex justify-content-between mt-auto">
 									<div>
 										<a class="btn btn-primary me-2" href="{{url('meeting.detail', { id: meeting.id})}}">Détails</a>
 									</div>

@@ -44,6 +44,31 @@
 			</div>
 		</div>
 
+		{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+			{% if (app.user.email == meeting.climber.email) and (meeting.date < date('now')) %}
+				<div class="section my-4">
+					<h2>Liste des participants</h2>
+						<ul class="list-group list-group-flush mt-2 striped">
+						{% for climberMeeting in meeting.climberMeetings %}
+						{% set level = climberMeeting.climber.roles[0] | split('_') %}
+
+						<li class="list-group-item d-flex flex-row align-items-center">
+                <span class="col-md-6 fw-bold"><a href="{{ url('meeting.detail', {id: climberMeeting.meeting.id}) }}">{{ climberMeeting.climber.firstname }} {{ climberMeeting.climber.lastname }}</a></span>
+
+								{% if climberMeeting.HasParticipated == false %}
+									<span class="col-md text-center"><a class="btn btn-info" href="{{ url('climber.hasParticipated', {id: meeting.id, id_climber: climberMeeting.climber.id}) }}">Présent</a></span>
+								{% else %}
+									<span class="col-md text-center"><a class="btn btn-danger" href="{{ url('climber.hasParticipatedCancel', {id: meeting.id, id_climber: climberMeeting.climber.id}) }}">Annuler</a></span>
+								{% endif %}
+
+                <span class="col-md text-end"><img src="../icons/{{ level[1] | lower }}.png" alt="" height="35"/></span>
+              </li>
+						{% endfor %}
+					</ul>
+				</div>
+			{% endif %}
+		{% endif %}
+
 		<div class="section my-4">
 			<h2>Commentaires</h2>
 
