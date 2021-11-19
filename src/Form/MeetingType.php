@@ -16,13 +16,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class MeetingType extends AbstractType
 {
-    private $security;
-
-    public function __construct(Security $security)
-    {
-        $this->security = $security;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

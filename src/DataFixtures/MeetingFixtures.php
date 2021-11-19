@@ -32,7 +32,7 @@ class MeetingFixtures extends Fixture implements OrderedFixtureInterface
         
         $date = new \DateTime('@'.strtotime('now'));
         $dateNextWeek = new \DateTime('@'.strtotime('+1 week'));
-        $grimpeurOr = $this->climberRepository->findOneBy(array('email' => 'leegrimpeur@test.com'));
+        $grimpeurOr = $this->climberRepository->findOneBy(array('email' => 'test@test.com'));
         
 
         for ($i=0; $i < 8; $i++) { 
