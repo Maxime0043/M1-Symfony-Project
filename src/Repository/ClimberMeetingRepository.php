@@ -19,6 +19,19 @@ class ClimberMeetingRepository extends ServiceEntityRepository
         parent::__construct($registry, ClimberMeeting::class);
     }
 
+    public function isClimberAlreadyRegister(int $climber, int $meeting)
+    {
+        return $this->createQueryBuilder('cm')
+            ->where('cm.climber = :climber')
+            ->andWhere('cm.meeting = :meeting')
+            ->setParameters([
+                'climber'   => $climber,
+                'meeting'   => $meeting
+            ])
+            ->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return ClimberMeeting[] Returns an array of ClimberMeeting objects
     //  */
