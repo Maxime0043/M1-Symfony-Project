@@ -84,7 +84,7 @@
         <h2>Inscriptions aux Journées Découverte</h2>
 
         {% if nonParticipatedMeetings|length > 0 %}
-          <ul class="list-group list-group-flush">
+          <ul class="list-group list-group-flush striped">
             {% for climberMeeting in nonParticipatedMeetings %}
               {% set meeting = climberMeeting.meeting %}
               {% set picture = meeting.level.name|lower %}
@@ -105,7 +105,7 @@
         <h2>Participations aux Journées Découverte</h2>
 
         {% if participatedMeetings|length > 0 %}
-          <ul class="list-group list-group-flush">
+          <ul class="list-group list-group-flush striped">
             {% for climberMeeting in participatedMeetings %}
               {% set meeting = climberMeeting.meeting %}
               {% set picture = meeting.level.name|lower %}
