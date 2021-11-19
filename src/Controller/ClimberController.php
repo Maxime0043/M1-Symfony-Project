@@ -6,7 +6,6 @@ use App\Entity\ClimberMeeting;
 use App\Repository\ClimberMeetingRepository;
 use App\Repository\MeetingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -28,9 +27,15 @@ class ClimberController extends AbstractController
       $roles = explode('_', $this->getUser()->getRoles()[0]);
       $picture = strtolower($roles[1]);
 
+      // On récupère les Journées Découverte auquelles l'utilisateur s'est inscrit et a participé
+      $nonParticipatedMeetings = $this->climberMeetingRepository->getNonParticipatedMeetings($this->getuser()->getid());
+      $participatedMeetings = $this->climberMeetingRepository->getParticipatedMeetings($this->getuser()->getid());
+
       // On dirige l'utilisateur vers sa page de compte
       return $this->render('climber/account.html.twig', [
-         'picture'   => $picture
+         'picture'                  => $picture,
+         'nonParticipatedMeetings'  => $nonParticipatedMeetings,
+         'participatedMeetings'     => $participatedMeetings
       ]);
    }
 
@@ -39,8 +44,9 @@ class ClimberController extends AbstractController
    public function participate($id): Response
    {
       // Si l'utilisateur n'est pas connecté, on le redirige vers la page de connexion
-      if (!$this->isGranted('IS_AUTHENTICATED_FULLY'))
+      if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
          return $this->redirectToRoute('security.login');
+      }
 
       $meeting = $this->meetingRepository->find($id);
 
@@ -49,7 +55,16 @@ class ClimberController extends AbstractController
 
       // Si l'utilisateur participe déjà à la Journée Découverte, on le redirige vers la page d'accueil
       if ($isAlreadyParticipating) {
-         $this->addFlash('meetingParticipation', 'Vous participez déjà à la Journée Découverte "' . $meeting->getTitle() . '" du ' . $meeting->getDate()->format('d/m/Y H:i:s') . '.');
+         $this->addFlash('meetingParticipationError', 'Vous participez déjà à la Journée Découverte "' . $meeting->getTitle() . '" du ' . $meeting->getDate()->format('d/m/Y H:i:s') . '.');
+         return $this->redirectToRoute('meeting.index');
+      }
+
+      // Si la capacité d'inscription maximal de la Journée Découverte est dépassée, on le redirige vers la liste des Journées Découverte
+      // dd($this->climberMeetingRepository->getParticipantCount($meeting->getId()));
+
+      // Si l'utilisateur n'a pas le niveau requis, on le redirige vers la liste des Journées Découverte
+      if ($this->getUser()->getPoints() < $meeting->getLevel()->getPointsNeeded()) {
+         $this->addFlash('meetingParticipationError', 'Vous n\'avez pas le niveau requis pour participer à cette Journée Découverte.\n\nNiveau requis: ' . $meeting->getLevel()->getName());
          return $this->redirectToRoute('meeting.index');
       }
 

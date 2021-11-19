@@ -32,6 +32,43 @@ class ClimberMeetingRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function getParticipantCount(int $meeting)
+    {
+        return $this->createQueryBuilder('cm')
+            ->select('cm.meeting AS meeting')
+            ->where('meeting = :meeting')
+            ->setParameter('meeting', $meeting)
+            ->groupBy('cm.meeting')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getNonParticipatedMeetings(int $climber)
+    {
+        return $this->createQueryBuilder('cm')
+            ->where('cm.climber = :climber')
+            ->andWhere('cm.has_participated = :participated')
+            ->setParameters([
+                'climber'       => $climber,
+                'participated'  => false
+            ])
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getParticipatedMeetings(int $climber)
+    {
+        return $this->createQueryBuilder('cm')
+            ->where('cm.climber = :climber')
+            ->andWhere('cm.has_participated = :participated')
+            ->setParameters([
+                'climber'       => $climber,
+                'participated'  => true
+            ])
+            ->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return ClimberMeeting[] Returns an array of ClimberMeeting objects
     //  */
