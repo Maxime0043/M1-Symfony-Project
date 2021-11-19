@@ -82,10 +82,44 @@
     <div class="section mt-3">
       <div>
         <h2>Inscriptions aux Journées Découverte</h2>
+
+        {% if nonParticipatedMeetings|length > 0 %}
+          <ul class="list-group list-group-flush">
+            {% for climberMeeting in nonParticipatedMeetings %}
+              {% set meeting = climberMeeting.meeting %}
+              {% set picture = meeting.level.name|lower %}
+
+              <li class="list-group-item d-flex flex-row align-items-center">
+                <span class="col-md-6 fw-bold"><a href="{{ url('meeting.detail', {id: meeting.id}) }}">{{ meeting.title }}</a></span>
+                <span class="col-md text-center">{{ meeting.date|date("d/m/Y H:i") }}</span>
+                <span class="col-md text-end"><img src="./icons/{{ picture }}.png" alt="" height="35" /></span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="mt-3">Vous ne vous êtes inscrit à aucune Journée Découverte pour le moment.</p>
+        {% endif %}
       </div>
 
-      <div>
+      <div class="mt-3">
         <h2>Participations aux Journées Découverte</h2>
+
+        {% if participatedMeetings|length > 0 %}
+          <ul class="list-group list-group-flush">
+            {% for climberMeeting in participatedMeetings %}
+              {% set meeting = climberMeeting.meeting %}
+              {% set picture = meeting.level.name|lower %}
+
+              <li class="list-group-item d-flex flex-row align-items-center">
+                <span class="col-md-6 fw-bold"><a href="{{ url('meeting.detail', {id: meeting.id}) }}">{{ meeting.title }}</a></span>
+                <span class="col-md text-center">{{ meeting.date|date("d/m/Y H:i") }}</span>
+                <span class="col-md text-end"><img src="./icons/{{ picture }}.png" alt="" height="35" /></span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="mt-3">Vous n'avez participé à aucune Journée Découverte pour le moment.</p>
+        {% endif %}
       </div>
     </div>
   </div>

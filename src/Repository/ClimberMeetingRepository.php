@@ -41,6 +41,8 @@ class ClimberMeetingRepository extends ServiceEntityRepository
                 'climber'       => $climber,
                 'participated'  => false
             ])
+            ->join('cm.meeting', 'm')
+            ->orderBy('m.date', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -54,6 +56,8 @@ class ClimberMeetingRepository extends ServiceEntityRepository
                 'climber'       => $climber,
                 'participated'  => true
             ])
+            ->join('cm.meeting', 'm')
+            ->orderBy('m.date', 'DESC')
             ->getQuery()
             ->getResult();
     }
