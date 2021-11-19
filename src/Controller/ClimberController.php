@@ -60,11 +60,16 @@ class ClimberController extends AbstractController
       }
 
       // Si la capacité d'inscription maximal de la Journée Découverte est dépassée, on le redirige vers la liste des Journées Découverte
-      // dd($this->climberMeetingRepository->getParticipantCount($meeting->getId()));
+      if (count($meeting->getClimberMeetings()) >= $meeting->getLimitClimber()) {
+         $this->addFlash('meetingParticipationError', 'La limite d\'inscription pour cette Journée Découverte a été atteinte. Vous ne pouvez donc pas vous y inscrire.');
+         return $this->redirectToRoute('meeting.index');
+      }
+
 
       // Si l'utilisateur n'a pas le niveau requis, on le redirige vers la liste des Journées Découverte
       if ($this->getUser()->getPoints() < $meeting->getLevel()->getPointsNeeded()) {
-         $this->addFlash('meetingParticipationError', 'Vous n\'avez pas le niveau requis pour participer à cette Journée Découverte.\n\nNiveau requis: ' . $meeting->getLevel()->getName());
+         $this->addFlash('meetingParticipationError', 'Vous n\'avez pas le niveau requis pour participer à cette Journée Découverte.');
+         $this->addFlash('meetingParticipationError', 'Niveau requis: ' . $meeting->getLevel()->getName());
          return $this->redirectToRoute('meeting.index');
       }
 
