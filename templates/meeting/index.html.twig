@@ -13,6 +13,12 @@
 			</div>
 		{% endif %}
 
+		<ul class="list-group mt-2 my-4">
+			{% for message in app.flashes('meetingParticipationError') %}
+				<li class="list-group-item list-group-item-danger">{{ message|trans|nl2br }}</li>
+    	{% endfor %}
+		</ul>
+
 		<div class="row mt-3">
 			{% for meeting in meetings %}
 				<div class="col-md-4 mb-3 d-flex align-items-stretch">

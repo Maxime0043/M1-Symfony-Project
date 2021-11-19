@@ -32,17 +32,6 @@ class ClimberMeetingRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function getParticipantCount(int $meeting)
-    {
-        return $this->createQueryBuilder('cm')
-            ->select('cm.meeting AS meeting')
-            ->where('meeting = :meeting')
-            ->setParameter('meeting', $meeting)
-            ->groupBy('cm.meeting')
-            ->getQuery()
-            ->getResult();
-    }
-
     public function getNonParticipatedMeetings(int $climber)
     {
         return $this->createQueryBuilder('cm')
