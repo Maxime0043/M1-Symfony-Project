@@ -6,6 +6,7 @@ use App\Repository\MeetingRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[ORM\Entity(repositoryClass: MeetingRepository::class)]
 class Meeting
@@ -98,12 +99,12 @@ class Meeting
         return $this;
     }
 
-    public function getPicture(): ?string
+    public function getPicture(): null|string|UploadedFile
     {
         return $this->picture;
     }
 
-    public function setPicture(string $picture): self
+    public function setPicture(null|string|UploadedFile $picture): self
     {
         $this->picture = $picture;
 
