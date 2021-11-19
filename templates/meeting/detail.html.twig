@@ -10,7 +10,7 @@
 			</div>
 		</div>
 
-		<div class="section mt-4">
+		<div class="section my-4">
 			<div class="row mt-3">
 				<div class="col-md-4">
 						<h1>{{ meeting.title }}</h1>
@@ -46,7 +46,7 @@
 
 		{% if is_granted('IS_AUTHENTICATED_FULLY') %}
 			{% if (app.user.email == meeting.climber.email) and (meeting.date < date('now')) %}
-				<div class="section my-4">
+				<div class="section mb-4">
 					<h2>Liste des participants</h2>
 						<ul class="list-group list-group-flush mt-2 striped">
 						{% for climberMeeting in meeting.climberMeetings %}
@@ -69,38 +69,39 @@
 			{% endif %}
 		{% endif %}
 
-		<div class="section my-4">
-			<h2>Commentaires</h2>
+		{% if isRegistered and meeting.date < date('now') %}
+			<div class="section mb-4">
+				<h2>Commentaires</h2>
 
-			<ul class="list-group list-group-flush mt-2">
-				<li class="list-group-item">
-					<div>
-						<h3>Jean-Marie</h3>
-						<p>12/11/2021 09:15:03</p>
-
-						<p>Je suis un commentaire</p>
+				{{ form_start(formComment, { attr : { 'class': 'mt-4' } }) }}
+					<div class="form-group col-md">
+						{{ form_label(formComment.content, 'Contenu du commentaire') }}
+						{{ form_widget(formComment.content) }}
 					</div>
-				</li>
+
+					<button class="btn btn-primary mt-4">Ajouter</button>
+				{{ form_end(formComment) }}
 				
-				<li class="list-group-item">
-					<div>
-						<h3>Jean-Marie</h3>
-						<p>12/11/2021 09:15:03</p>
+				{% if meeting.comments|length > 0 %}
+					<hr class="solid mb-0">
 
-						<p>Je suis un commentaire</p>
-					</div>
-				</li>
+					<ul class="list-group list-group-flush">
+						{% for comment in meeting.comments %}
+							<li class="list-group-item mt-2">
+								<div>
+									<div class="d-flex flex-row flex-warp justify-content-between align-items-center">
+										<h3>{{ comment.climber.firstname }} {{ comment.climber.lastname }}</h3>
+										<p class="mb-0">{{ comment.date|date("d/m/Y H:i:s") }}</p>
+									</div>
 
-				<li class="list-group-item">
-					<div>
-						<h3>Jean-Marie</h3>
-						<p>12/11/2021 09:15:03</p>
-
-						<p>Je suis un commentaire</p>
-					</div>
-				</li>
-			</ul>
-		</div>
+									<p>{{ comment.content }}</p>
+								</div>
+							</li>
+						{% endfor %}
+					</ul>
+				{% endif %}
+			</div>
+		{% endif %}
 
 		{# <hr class="solid"> #}
 		

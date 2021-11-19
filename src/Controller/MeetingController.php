@@ -1,8 +1,12 @@
 <?php
+
 namespace App\Controller;
 
+use App\Entity\Comment;
 use App\Entity\Meeting;
+use App\Form\CommentType;
 use App\Form\MeetingType;
+use App\Repository\ClimberMeetingRepository;
 use App\Repository\MeetingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -14,12 +18,12 @@ use Symfony\Component\String\ByteString;
 class MeetingController extends AbstractController
 {
 
-	public function __construct(private MeetingRepository $meetingRepository)
+	public function __construct(private MeetingRepository $meetingRepository, private ClimberMeetingRepository $climberMeetingRepository)
 	{
-		
 	}
 
 	#[Route('/', name: 'meeting.index')]
+
 	public function index(): Response
 	{
 		return $this->render('meeting/index.html.twig', [
@@ -27,20 +31,20 @@ class MeetingController extends AbstractController
 		]);
 	}
 
-	#[Route('/ajout', name: 'meeting.add')]
+	#[Route('/add', name: 'meeting.add')]
+
 	public function add(Request $request): Response
 	{
-
 		$meeting = new Meeting();
-    $form = $this->createForm(MeetingType::class, $meeting, [
+		$form = $this->createForm(MeetingType::class, $meeting, [
 			'id' => null
 		]);
 
-    $form->handleRequest($request);
-    if ($form->isSubmitted() && $form->isValid()){
-			$meeting->setClimber( $this->getUser() );
-			
-			if($meeting->getPicture() instanceof UploadedFile){
+		$form->handleRequest($request);
+		if ($form->isSubmitted() && $form->isValid()) {
+			$meeting->setClimber($this->getUser());
+
+			if ($meeting->getPicture() instanceof UploadedFile) {
 				$fileName = ByteString::fromRandom(32)->lower();
 				$extension = $meeting->getPicture()->guessClientExtension();
 
@@ -53,7 +57,7 @@ class MeetingController extends AbstractController
 			$entityManager->flush();
 
 			return $this->redirectToRoute('meeting.index');
-    }
+		}
 
 		return $this->render('meeting/add.html.twig', [
 			'formMeeting' => $form->createView()
@@ -61,14 +65,31 @@ class MeetingController extends AbstractController
 	}
 
 	#[Route('/meeting/{id}', name: 'meeting.detail')]
-	public function detail(string $id): Response
+
+	public function detail(Request $request, string $id): Response
 	{
+		$comment = new Comment();
+		$meeting = $this->meetingRepository->find($id);
+
+		$form = $this->createForm(CommentType::class, $comment);
+		$form->handleRequest($request);
+
+		if ($form->isSubmitted() && $form->isValid()) {
+			$comment->setClimber($this->getUser());
+			$comment->setMeeting($meeting);
+			$comment->setDate(new \DateTime('@' . strtotime('now')));
+
+			$entityManager = $this->getDoctrine()->getManager();
+			$entityManager->persist($comment);
+			$entityManager->flush();
+		}
+
+		$isRegistered = count($this->climberMeetingRepository->isClimberAlreadyRegister($this->getUser()->getId(), $meeting->getId())) > 0;
+
 		return $this->render('meeting/detail.html.twig', [
-			'meeting' => $this->meetingRepository->findOneBy(array("id" => $id))
+			'meeting' 			=> $this->meetingRepository->findOneBy(array("id" => $id)),
+			'formComment' 	=> $form->createView(),
+			'isRegistered'	=> $isRegistered
 		]);
 	}
-
 }
-
-
-?>

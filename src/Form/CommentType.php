@@ -21,7 +21,7 @@ class CommentType extends AbstractType
     {
         $builder
             ->add('content', TextareaType::class, [
-                'attr'          => array('rows' => '7'),
+                'attr'          => array('rows' => '3'),
                 'constraints'   => [
                     new NotBlank([
                         'message'   => 'Veulliez saisir le contenu du commentaire.'
