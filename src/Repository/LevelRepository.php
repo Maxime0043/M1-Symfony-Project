@@ -19,6 +19,15 @@ class LevelRepository extends ServiceEntityRepository
         parent::__construct($registry, Level::class);
     }
 
+    public function getBasicLevel()
+    {
+        return $this->createQueryBuilder('l')
+            ->where('l.points_needed = :val')
+            ->setParameter('val', 0)
+            ->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return Level[] Returns an array of Level objects
     //  */

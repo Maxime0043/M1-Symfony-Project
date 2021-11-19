@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Climber;
 use App\Form\RegistrationFormType;
+use App\Repository\LevelRepository;
 use App\Security\LogInFormAuthenticator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,6 +14,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class RegistrationController extends AbstractController
 {
+    function __construct(private LevelRepository $levelRepository)
+    {
+    }
+
     #[Route('/register', name: 'security.register')]
 
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, LogInFormAuthenticator $login): Response
@@ -31,7 +36,7 @@ class RegistrationController extends AbstractController
             );
 
             $user->setPoints(0);
-            $user->setRoles(['ROLE_USER']);
+            $user->setRoles($this->levelRepository->getBasicLevel()[0]);
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
