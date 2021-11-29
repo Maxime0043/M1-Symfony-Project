@@ -36,4 +36,9 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/add, roles: ROLE_OR }
+        - { path: ^/meeting/\d+/participate, roles: ROLE_BRONZE }
         # - { path: ^/profile, roles: ROLE_USER }
+
+    role_hierarchy:
+        ROLE_OR: ROLE_ARGENT
+        ROLE_ARGENT: ROLE_BRONZE

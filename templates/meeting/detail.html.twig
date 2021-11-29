@@ -3,6 +3,15 @@
 {% block title %}Détails d'une journée découverte{% endblock %}
 
 {% block body %}
+
+	{% set isOrganiser = false %}
+
+	{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+		{% if (app.user.email == meeting.climber.email) %}
+			{% set isOrganiser = true %}
+		{% endif %}
+	{% endif %}
+
 	<div class="container-md">
 		<div class="row mt-5">
 			<div class="col-md-2">
@@ -54,20 +63,17 @@
 						<div class="col-md-1">
 							<a class="btn btn-success" href="{{url('climber.participate', { id: meeting.id} )}}">S'inscrire</a>
 						</div>
+						{% if isOrganiser %}
+						<div class="col-md-1">
+							<a class="btn btn-primary" href="{{url('meeting.update', { id: meeting.id} )}}">Modifier</a>
+						</div>
+						{% endif %}
 					</div>
 				{% endif %}
 			{% endif %}
 		</div>
 
-		{% set isOrganiser = false %}
-
-		{% if is_granted('IS_AUTHENTICATED_FULLY') %}
-			{% if (app.user.email == meeting.climber.email) and (date(meeting.date) < date('now')) %}
-				{% set isOrganiser = true %}
-			{% endif %}
-		{% endif %}
-
-		{% if isOrganiser %}
+		{% if isOrganiser and (date(meeting.date) < date('now')) %}
 			<div class="section mb-4">
 				<h2>Liste des participants</h2>
 					<ul class="list-group list-group-flush mt-2 striped">

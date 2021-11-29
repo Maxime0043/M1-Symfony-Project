@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\MeetingRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Events as Events;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -247,5 +249,19 @@ class Meeting
         $this->description = $description;
 
         return $this;
+    }
+
+    public function postLoad(LifecycleEventArgs $event): void
+    {
+        if($event->getEntity() instanceof Meeting){
+            $event->getEntity()->prevImage = $event->getEntity()->getPicture();
+        }
+    }
+
+    public function getSubscribedEvents():array
+    {
+        return [
+            Events::postLoad,
+        ];
     }
 }

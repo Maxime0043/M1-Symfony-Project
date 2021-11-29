@@ -96,4 +96,46 @@ class MeetingController extends AbstractController
 			'isRegistered'	=> $isRegistered
 		]);
 	}
+
+
+	#[Route('/update/{id}', name: 'meeting.update')]
+
+	public function update(string $id, Request $request): Response
+	{
+		$meeting = $this->meetingRepository->find($id);
+		$form = $this->createForm(MeetingType::class, $meeting, [
+			'id' => $id
+		]);
+
+		$form->handleRequest($request);
+		if ($form->isSubmitted() && $form->isValid()) {
+			$meeting->setClimber($this->getUser());
+
+			if ($meeting->getPicture() instanceof UploadedFile) {
+				$fileName = ByteString::fromRandom(32)->lower();
+				$extension = $meeting->getPicture()->guessClientExtension();
+
+				$meeting->getPicture()->move('img', "$fileName.$extension");
+
+				$meeting->setPicture("$fileName.$extension");
+
+				if($meeting->getId()){
+					unlink("img/{$meeting->prevImage}");
+				}
+			}
+			else{
+				$meeting->setPicture($meeting->prevImage);
+			}
+			$entityManager = $this->getDoctrine()->getManager();
+			$entityManager->persist($meeting);
+			$entityManager->flush();
+
+			return $this->redirectToRoute('meeting.detail',["id" => $id]);
+		}
+
+		return $this->render('meeting/update.html.twig', [
+			'meeting' 			=> $meeting,
+			'formMeeting' => $form->createView()
+		]);
+	}
 }
