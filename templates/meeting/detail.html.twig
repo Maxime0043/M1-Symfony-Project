@@ -17,6 +17,8 @@
 						<p>Journée découverte proposé par {{ meeting.climber.lastname }} {{ meeting.climber.firstname }}</p>
 						<h4>Le {{ meeting.date | date("d/m/Y") }}</h4>
 						<h5>à {{ meeting.date | date("H:i") }}</h5>
+						{% set remainingPlaces = meeting.LimitClimber - meeting.climberMeetings|length %}
+						<p>Nombre de places restantes: {{ remainingPlaces }} / {{ meeting.LimitClimber }}</p>
 				</div>
 				<div class="col-md-4">
 					<img src="../icons/{{ meeting.level.name | lower }}.png" alt="" height="75" />
@@ -37,53 +39,82 @@
 					<p>{{ meeting.description }}</p>
 			</div>
 
-			<div class="row mt-1">
-				<div class="col-md-1">
-					<a class="btn btn-success" href="{{url('climber.participate', { id: meeting.id} )}}">S'inscrire</a>
+			{% if not isRegistered and date('now') < date(meeting.date) %}
+				<div class="row mt-1">
+					<div class="col-md-1">
+						<a class="btn btn-success" href="{{url('climber.participate', { id: meeting.id} )}}">S'inscrire</a>
+					</div>
 				</div>
-			</div>
+			{% endif %}
 		</div>
 
+		{% set isOrganiser = false %}
+
 		{% if is_granted('IS_AUTHENTICATED_FULLY') %}
-			{% if (app.user.email == meeting.climber.email) and (meeting.date < date('now')) %}
+			{% if (app.user.email == meeting.climber.email) and (date(meeting.date) < date('now')) %}
+				{% set isOrganiser = true %}
+			{% endif %}
+		{% endif %}
+
+		{% if isOrganiser %}
+			<div class="section mb-4">
+				<h2>Liste des participants</h2>
+					<ul class="list-group list-group-flush mt-2 striped">
+					{% for climberMeeting in meeting.climberMeetings %}
+					{% set level = climberMeeting.climber.roles[0] | split('_') %}
+
+					<li class="list-group-item d-flex flex-row align-items-center">
+							<span class="col-md-6 fw-bold">{{ climberMeeting.climber.firstname }} {{ climberMeeting.climber.lastname }}</span>
+
+							{% if climberMeeting.HasParticipated == false %}
+								<span class="col-md text-center"><a class="btn btn-info" href="{{ url('climber.hasParticipated', {id: meeting.id, id_climber: climberMeeting.climber.id}) }}">Présent</a></span>
+							{% else %}
+								<span class="col-md text-center"><a class="btn btn-danger" href="{{ url('climber.hasParticipatedCancel', {id: meeting.id, id_climber: climberMeeting.climber.id}) }}">Annuler</a></span>
+							{% endif %}
+
+							<span class="col-md text-end"><img src="../icons/{{ level[1] | lower }}.png" alt="" height="35"/></span>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
+		{% else %}
+			{% if meeting.climberMeetings|length > 0 %}
 				<div class="section mb-4">
 					<h2>Liste des participants</h2>
 						<ul class="list-group list-group-flush mt-2 striped">
 						{% for climberMeeting in meeting.climberMeetings %}
-						{% set level = climberMeeting.climber.roles[0] | split('_') %}
+							{% set level = climberMeeting.climber.roles[0] | split('_') %}
 
-						<li class="list-group-item d-flex flex-row align-items-center">
-                <span class="col-md-6 fw-bold"><a href="{{ url('meeting.detail', {id: climberMeeting.meeting.id}) }}">{{ climberMeeting.climber.firstname }} {{ climberMeeting.climber.lastname }}</a></span>
-
-								{% if climberMeeting.HasParticipated == false %}
-									<span class="col-md text-center"><a class="btn btn-info" href="{{ url('climber.hasParticipated', {id: meeting.id, id_climber: climberMeeting.climber.id}) }}">Présent</a></span>
-								{% else %}
-									<span class="col-md text-center"><a class="btn btn-danger" href="{{ url('climber.hasParticipatedCancel', {id: meeting.id, id_climber: climberMeeting.climber.id}) }}">Annuler</a></span>
-								{% endif %}
-
-                <span class="col-md text-end"><img src="../icons/{{ level[1] | lower }}.png" alt="" height="35"/></span>
-              </li>
+							<li class="list-group-item d-flex flex-row align-items-center">
+								<span class="col-md fw-bold">{{ climberMeeting.climber.firstname }} {{ climberMeeting.climber.lastname }}</span>
+								<span class="col-md text-center">{{ climberMeeting.climber.email }}</span>
+								<span class="col-md text-end"><img src="../icons/{{ level[1] | lower }}.png" alt="" height="35"/></span>
+							</li>
 						{% endfor %}
 					</ul>
 				</div>
-			{% endif %}
+			{% endif %}	
 		{% endif %}
 
-		{% if isRegistered and meeting.date < date('now') %}
+		{% if meeting.date < date('now') %}
 			<div class="section mb-4">
 				<h2>Commentaires</h2>
 
-				{{ form_start(formComment, { attr : { 'class': 'mt-4' } }) }}
-					<div class="form-group col-md">
-						{{ form_label(formComment.content, 'Contenu du commentaire') }}
-						{{ form_widget(formComment.content) }}
-					</div>
+				{% if isRegistered %}
+					{{ form_start(formComment, { attr : { 'class': 'mt-4' } }) }}
+						<div class="form-group col-md">
+							{{ form_label(formComment.content, 'Contenu du commentaire') }}
+							{{ form_widget(formComment.content) }}
+						</div>
 
-					<button class="btn btn-primary mt-4">Ajouter</button>
-				{{ form_end(formComment) }}
+						<button class="btn btn-primary mt-4">Ajouter</button>
+					{{ form_end(formComment) }}
+				{% endif %}
 				
 				{% if meeting.comments|length > 0 %}
-					<hr class="solid mb-0">
+					{% if isRegistered %}
+						<hr class="solid mb-0">
+					{% endif %}
 
 					<ul class="list-group list-group-flush">
 						{% for comment in meeting.comments %}
@@ -99,6 +130,8 @@
 							</li>
 						{% endfor %}
 					</ul>
+				{% else %}
+					<p>Il n'y a aucun commentaire pour le moment.</p>
 				{% endif %}
 			</div>
 		{% endif %}

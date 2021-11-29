@@ -84,7 +84,11 @@ class MeetingController extends AbstractController
 			$entityManager->flush();
 		}
 
-		$isRegistered = count($this->climberMeetingRepository->isClimberAlreadyRegister($this->getUser()->getId(), $meeting->getId())) > 0;
+		$isRegistered = false;
+
+		if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+			$isRegistered = count($this->climberMeetingRepository->isClimberAlreadyRegister($this->getUser()->getId(), $meeting->getId())) > 0;
+		}
 
 		return $this->render('meeting/detail.html.twig', [
 			'meeting' 			=> $this->meetingRepository->findOneBy(array("id" => $id)),

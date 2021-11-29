@@ -14,11 +14,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ClimberController extends AbstractController
 {
-   function __construct(private MeetingRepository $meetingRepository, 
-                        private ClimberMeetingRepository $climberMeetingRepository, 
-                        private ClimberRepository $climberRepository,
-                        private LevelRepository $levelRepository)
-   {
+   function __construct(
+      private MeetingRepository $meetingRepository,
+      private ClimberMeetingRepository $climberMeetingRepository,
+      private ClimberRepository $climberRepository,
+      private LevelRepository $levelRepository
+   ) {
    }
 
    #[Route('/account', name: 'climber.account')]
@@ -71,7 +72,6 @@ class ClimberController extends AbstractController
          return $this->redirectToRoute('meeting.index');
       }
 
-
       // Si l'utilisateur n'a pas le niveau requis, on le redirige vers la liste des Journées Découverte
       if ($this->getUser()->getPoints() < $meeting->getLevel()->getPointsNeeded()) {
          $this->addFlash('meetingParticipationError', 'Vous n\'avez pas le niveau requis pour participer à cette Journée Découverte.');
@@ -90,16 +90,18 @@ class ClimberController extends AbstractController
       $entityManager->flush();
 
       // On dirige l'utilisateur vers la liste des Journées Découverte
+      $this->addFlash('meetingParticipationSuccess', 'Votre inscription à la Journée Découverte \'' . $meeting->getTitle() . '\' a été approuvée.');
       return $this->redirectToRoute('meeting.index');
    }
 
    #[Route('/meeting/{id}/hasParticipated/{id_climber}', name: 'climber.hasParticipated')]
 
-   public function hasParticipated($id, $id_climber){
+   public function hasParticipated($id, $id_climber)
+   {
 
       $climberMeeting = $this->climberMeetingRepository->findOneBy(array('meeting' => $id, 'climber' => $id_climber));
       $climberMeeting->setHasParticipated(true);
-      
+
       $climber = $this->climberRepository->find($id_climber);
 
       $points = $climber->getPoints();
@@ -110,7 +112,7 @@ class ClimberController extends AbstractController
 
       $levels = $this->levelRepository->getLevels();
       foreach ($levels as $level) {
-         if($points >= $level->getPointsNeeded()){
+         if ($points >= $level->getPointsNeeded()) {
             $levelClimber = $level;
          }
       }
@@ -127,7 +129,8 @@ class ClimberController extends AbstractController
 
    #[Route('/meeting/{id}/hasParticipatedCancel/{id_climber}', name: 'climber.hasParticipatedCancel')]
 
-   public function hasParticipatedCancel($id, $id_climber){
+   public function hasParticipatedCancel($id, $id_climber)
+   {
 
       $climberMeeting = $this->climberMeetingRepository->findOneBy(array('meeting' => $id, 'climber' => $id_climber));
       $climberMeeting->setHasParticipated(false);
@@ -142,7 +145,7 @@ class ClimberController extends AbstractController
 
       $levels = $this->levelRepository->getLevels();
       foreach ($levels as $level) {
-         if($points >= $level->getPointsNeeded()){
+         if ($points >= $level->getPointsNeeded()) {
             $levelClimber = $level;
          }
       }
