@@ -25,12 +25,21 @@
 				</div>
 
 				<div class="col-md-4">
-					<img class="card-img-top"
+					{% if isFile("\img\\" ~ meeting.picture) %}
+						<img class="card-img-top"
+							src="{{ asset("img/" ~ meeting.picture) }}"
+							alt="Card image cap"
+							style="object-fit: cover"
+							height='250'
+						/>
+					{% else %}
+						<img class="card-img-top"
 							src="{{ meeting.picture }}"
 							alt="Card image cap"
-							style="object-fit: contain"
+							style="object-fit: cover"
 							height='250'
-					/>
+						/>
+					{% endif %}
 				</div>
 			</div>
 
@@ -39,12 +48,14 @@
 					<p>{{ meeting.description }}</p>
 			</div>
 
-			{% if not isRegistered and date('now') < date(meeting.date) %}
-				<div class="row mt-1">
-					<div class="col-md-1">
-						<a class="btn btn-success" href="{{url('climber.participate', { id: meeting.id} )}}">S'inscrire</a>
+			{% if app.user.email is defined %}
+				{% if not isRegistered and date('now') < date(meeting.date) %}
+					<div class="row mt-1">
+						<div class="col-md-1">
+							<a class="btn btn-success" href="{{url('climber.participate', { id: meeting.id} )}}">S'inscrire</a>
+						</div>
 					</div>
-				</div>
+				{% endif %}
 			{% endif %}
 		</div>
 
