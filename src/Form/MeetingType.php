@@ -19,6 +19,7 @@ class MeetingType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        // dd($options);
         $builder
             // ->add('id', HiddenType::class, array('data' => $options['id']))
             ->add('date', DateTimeType::class, array('widget' => 'single_text'))
@@ -26,10 +27,11 @@ class MeetingType extends AbstractType
             ->add('limit_climber')
             ->add('picture', FileType::class, [
                 'constraints' => $options['id']
-                    ? [new Blank()]
+                    ? []
                     : [new NotBlank([ 'message' => "Pas d'image sélectionnée"])],
-                'data_class' => null
-            , 'required'=>false])
+                'data_class' => null,
+                'required' => false
+            ])
             ->add('title')
             ->add('description')
             ->add('level', EntityType::class, [

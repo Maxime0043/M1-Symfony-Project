@@ -103,12 +103,14 @@ class MeetingController extends AbstractController
 	public function update(string $id, Request $request): Response
 	{
 		$meeting = $this->meetingRepository->find($id);
+	
 		$form = $this->createForm(MeetingType::class, $meeting, [
 			'id' => $id
 		]);
-
+		
 		$form->handleRequest($request);
 		if ($form->isSubmitted() && $form->isValid()) {
+			//	dd($meeting);
 			$meeting->setClimber($this->getUser());
 
 			if ($meeting->getPicture() instanceof UploadedFile) {

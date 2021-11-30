@@ -250,18 +250,4 @@ class Meeting
 
         return $this;
     }
-
-    public function postLoad(LifecycleEventArgs $event): void
-    {
-        if($event->getEntity() instanceof Meeting){
-            $event->getEntity()->prevImage = $event->getEntity()->getPicture();
-        }
-    }
-
-    public function getSubscribedEvents():array
-    {
-        return [
-            Events::postLoad,
-        ];
-    }
 }
