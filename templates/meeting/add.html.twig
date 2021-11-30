@@ -99,8 +99,6 @@
 			if(location.length > 0) {
 				location = location.replace(/ /g, '+');
 
-				console.log(location);
-
 				$.ajax({
 					type: 'GET',
 					url: 'https://api-adresse.data.gouv.fr/search/?q=' + location,

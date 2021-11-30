@@ -57,6 +57,12 @@
 					<p>{{ meeting.description }}</p>
 			</div>
 
+			<div class="row mt-1">
+					<h2>Adresse</h2>
+					<p>{{ meeting.location }}</p>
+					<div id="map"></div>
+			</div>
+
 			{% if app.user.email is defined %}
 				{% if not isRegistered and date('now') < date(meeting.date) %}
 					<div class="row mt-1">
@@ -73,45 +79,34 @@
 			{% endif %}
 		</div>
 
-		{% if isOrganiser and (date(meeting.date) < date('now')) %}
-			<div class="section mb-4">
-				<h2>Liste des participants</h2>
+		<div class="section mb-4">
+			<h2>Liste des participants</h2>
+				{% if meeting.climberMeetings|length > 0 %}
 					<ul class="list-group list-group-flush mt-2 striped">
-					{% for climberMeeting in meeting.climberMeetings %}
-					{% set level = climberMeeting.climber.roles[0] | split('_') %}
-
-					<li class="list-group-item d-flex flex-row align-items-center">
-							<span class="col-md-6 fw-bold">{{ climberMeeting.climber.firstname }} {{ climberMeeting.climber.lastname }}</span>
-
-							{% if climberMeeting.HasParticipated == false %}
-								<span class="col-md text-center"><a class="btn btn-info" href="{{ url('climber.hasParticipated', {id: meeting.id, id_climber: climberMeeting.climber.id}) }}">Présent</a></span>
-							{% else %}
-								<span class="col-md text-center"><a class="btn btn-danger" href="{{ url('climber.hasParticipatedCancel', {id: meeting.id, id_climber: climberMeeting.climber.id}) }}">Annuler</a></span>
-							{% endif %}
-
-							<span class="col-md text-end"><img src="../icons/{{ level[1] | lower }}.png" alt="" height="35"/></span>
-						</li>
-					{% endfor %}
-				</ul>
-			</div>
-		{% else %}
-			{% if meeting.climberMeetings|length > 0 %}
-				<div class="section mb-4">
-					<h2>Liste des participants</h2>
-						<ul class="list-group list-group-flush mt-2 striped">
 						{% for climberMeeting in meeting.climberMeetings %}
 							{% set level = climberMeeting.climber.roles[0] | split('_') %}
 
 							<li class="list-group-item d-flex flex-row align-items-center">
-								<span class="col-md fw-bold">{{ climberMeeting.climber.firstname }} {{ climberMeeting.climber.lastname }}</span>
-								<span class="col-md text-center">{{ climberMeeting.climber.email }}</span>
+								<span class="col-md-6 fw-bold">{{ climberMeeting.climber.firstname }} {{ climberMeeting.climber.lastname }}</span>
+
+								{% if isOrganiser and (date(meeting.date) < date('now')) %}
+									{% if climberMeeting.HasParticipated == false %}
+										<span class="col-md text-center"><a class="btn btn-info" href="{{ url('climber.hasParticipated', {id: meeting.id, id_climber: climberMeeting.climber.id}) }}">Présent</a></span>
+									{% else %}
+										<span class="col-md text-center"><a class="btn btn-danger" href="{{ url('climber.hasParticipatedCancel', {id: meeting.id, id_climber: climberMeeting.climber.id}) }}">Annuler</a></span>
+									{% endif %}
+								{% else %}
+									<span class="col-md text-center">{{ climberMeeting.climber.email }}</span>
+								{% endif %}
+
 								<span class="col-md text-end"><img src="../icons/{{ level[1] | lower }}.png" alt="" height="35"/></span>
 							</li>
 						{% endfor %}
 					</ul>
-				</div>
-			{% endif %}	
-		{% endif %}
+				{% else %}
+					<p>Aucune personne n'est inscrite pour cette Journée Découverte pour le moment.</p>
+				{% endif %}
+		</div>
 
 		{% if meeting.date < date('now') %}
 			<div class="section mb-4">
@@ -157,4 +152,43 @@
 		
 	</div>
 	
+{% endblock %}
+
+{% block javascripts %}
+	<script>
+		let map = L.map('map', {
+			center: [48.862725, 2.287592],
+			zoom: 13
+		});
+		let marker = null;
+
+		L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+			attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+			maxZoom: 18,
+			id: 'mapbox/streets-v11',
+			tileSize: 512,
+			zoomOffset: -1,
+			accessToken: 'pk.eyJ1IjoibWF1cmljZTM4IiwiYSI6ImNrd2tzNThpdjBtaDIycHBkajdzNm16Y28ifQ.lW3YvxlsIi497Drh9-_F9g'
+		}).addTo(map);
+
+		$.ajax({
+			type: 'GET',
+			url: 'https://api-adresse.data.gouv.fr/search/?q=' + {{ meeting.location|json_encode()|raw }}.trim().replace(/ /g, '+'),
+			dataType: 'json',
+			success: function(res) {
+				if(res.features[0] != undefined) {
+					const coordinates = [res.features[0].geometry.coordinates[1], res.features[0].geometry.coordinates[0]];
+
+					if(marker != null) {
+						map.removeLayer(marker);
+					}
+
+					map.panTo(coordinates);
+					marker = L.marker(coordinates).addTo(map);
+				} else {
+					alert("La localisation que vous avez saisis n'existe pas.");
+				}
+			}
+		});
+	</script>
 {% endblock %}
