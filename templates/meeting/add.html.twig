@@ -9,8 +9,6 @@
 					<h1 class="mt-3 mb-3">Ajouter une journée découverte</h1>
 
 					{{ form_start(formMeeting) }}
-						{{ form_widget(formMeeting.id) }}
-					
 						<div class="form-group col-md mt-3">
 							{{ form_label(formMeeting.title, 'Titre') }}
 							{{ form_widget(formMeeting.title, {attr : {placeholder: 'Saisissez un titre'}}) }}
@@ -23,7 +21,14 @@
 		
 						<div class="form-group col-md mt-3">
 							{{ form_label(formMeeting.location, 'Lieu de la Journée Découverte') }}
-							{{ form_widget(formMeeting.location, {attr : {placeholder: 'Saisissez un lieu'}}) }}
+							
+							<div class="input-group">
+								{{ form_widget(formMeeting.location, {attr : {placeholder: 'Saisissez un lieu'}}) }}
+								<button class="btn btn-success input-group-text" id="validate_location">Valider</button>
+							</div>
+
+							<div class="form-text">La localisation est validée lorsque vous cliquez sur le bouton "Valider" et que le marqueur est placé sur la carte.</div>
+							<div class="form-text mt-0">Vous devrez valider la localisation à chaque changement.</div>
 						</div>
 
 						<div id="map"></div>
@@ -58,23 +63,43 @@
 
 {% block javascripts %}
 	<script>
-		var map = L.map('map').setView([48.862725, 2.287592], 13);
+		let isValidLocation = false;
+
+		let map = L.map('map', {
+			center: [48.862725, 2.287592],
+			zoom: 13
+		});
 		let marker = null;
 
 		L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-				attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-				maxZoom: 18,
-				id: 'mapbox/streets-v11',
-				tileSize: 512,
-				zoomOffset: -1,
-				accessToken: 'pk.eyJ1IjoibWF1cmljZTM4IiwiYSI6ImNrd2tzNThpdjBtaDIycHBkajdzNm16Y28ifQ.lW3YvxlsIi497Drh9-_F9g'
+			attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+			maxZoom: 18,
+			id: 'mapbox/streets-v11',
+			tileSize: 512,
+			zoomOffset: -1,
+			accessToken: 'pk.eyJ1IjoibWF1cmljZTM4IiwiYSI6ImNrd2tzNThpdjBtaDIycHBkajdzNm16Y28ifQ.lW3YvxlsIi497Drh9-_F9g'
 		}).addTo(map);
 
-		$("#meeting_location").on("keyup", function() {
-			let location = $(this).val().trim();
+		$("form[name='meeting']").on("submit", function(e) {
+			if(!isValidLocation) {
+				e.preventDefault();
+				alert("Vous devez valider la localisation avant d'envoyer le formulaire.");
+			}
+		});
+
+		$("#meeting_location").on("keydown", function() {
+			isValidLocation = false;
+		});
+
+		$("#validate_location").on("click", function(e) {
+			e.preventDefault();
+
+			let location = $("#meeting_location").val().trim();
 
 			if(location.length > 0) {
-				location = location.replace(' ', '+');
+				location = location.replace(/ /g, '+');
+
+				console.log(location);
 
 				$.ajax({
 					type: 'GET',
@@ -82,6 +107,13 @@
 					dataType: 'json',
 					success: function(res) {
 						if(res.features[0] != undefined) {
+							const houseNumber = res.features[0].properties.housenumber;
+							const street = res.features[0].properties.street;
+							const zip = res.features[0].properties.postcode;
+							const city = res.features[0].properties.city;
+
+							$("#meeting_location").val(`${houseNumber} ${street}, ${zip} ${city}`);
+
 							const coordinates = [res.features[0].geometry.coordinates[1], res.features[0].geometry.coordinates[0]];
 
 							if(marker != null) {
@@ -90,6 +122,10 @@
 
 							map.panTo(coordinates);
 							marker = L.marker(coordinates).addTo(map);
+
+							isValidLocation = true;
+						} else {
+							alert("La localisation que vous avez saisis n'existe pas.");
 						}
 					}
 				});
