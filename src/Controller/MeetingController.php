@@ -4,9 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Entity\Meeting;
+use App\Entity\MeetingPicture;
 use App\Form\CommentType;
+use App\Form\MeetingPictureType;
 use App\Form\MeetingType;
 use App\Repository\ClimberMeetingRepository;
+use App\Repository\MeetingPictureRepository;
 use App\Repository\MeetingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -18,7 +21,9 @@ use Symfony\Component\String\ByteString;
 class MeetingController extends AbstractController
 {
 
-	public function __construct(private MeetingRepository $meetingRepository, private ClimberMeetingRepository $climberMeetingRepository)
+	public function __construct(private MeetingRepository $meetingRepository, 
+															private ClimberMeetingRepository $climberMeetingRepository,
+															private MeetingPictureRepository $meetingPictureRepository)
 	{
 	}
 
@@ -84,6 +89,32 @@ class MeetingController extends AbstractController
 			$entityManager->flush();
 		}
 
+		$meetingPicture = new MeetingPicture();
+		$formMeetingPicture = $this->createForm(MeetingPictureType::class, $meetingPicture);
+
+		$formMeetingPicture->handleRequest($request);
+
+		if ($formMeetingPicture->isSubmitted() && $formMeetingPicture->isValid()) {
+			$meetingPicture->setMeeting($meeting);
+
+			if ($meetingPicture->getPicture() instanceof UploadedFile) {
+				$fileName = ByteString::fromRandom(32)->lower();
+				$extension = $meetingPicture->getPicture()->guessClientExtension();
+
+				$meetingPicture->getPicture()->move('img', "$fileName.$extension");
+
+				$meetingPicture->setPicture("$fileName.$extension");
+
+				if($meetingPicture->getId()){
+					unlink("img/{$meetingPicture->prevImage}");
+				}
+			}
+
+			$entityManager = $this->getDoctrine()->getManager();
+			$entityManager->persist($meetingPicture);
+			$entityManager->flush();
+		}
+
 		$isRegistered = false;
 
 		if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -93,6 +124,7 @@ class MeetingController extends AbstractController
 		return $this->render('meeting/detail.html.twig', [
 			'meeting' 			=> $this->meetingRepository->findOneBy(array("id" => $id)),
 			'formComment' 	=> $form->createView(),
+			'formMeetingPicture' => $formMeetingPicture->createView(),
 			'isRegistered'	=> $isRegistered
 		]);
 	}
@@ -140,4 +172,22 @@ class MeetingController extends AbstractController
 			'formMeeting' => $form->createView()
 		]);
 	}
+
+
+	#[Route('/updatePictures/{id}', name: 'meeting.updatePictures')]
+
+	public function updatePictures(Request $request, string $id): Response
+	{
+		$meetingPicture = $this->meetingPictureRepository->find($id);
+		$idMeeting = $meetingPicture->getMeeting()->getId();
+
+		unlink("img/{$meetingPicture->getPicture()}");
+
+		$entityManager = $this->getDoctrine()->getManager();
+		$entityManager->remove($meetingPicture);
+		$entityManager->flush();
+
+		return $this->redirectToRoute('meeting.detail',["id" => $idMeeting]);
+	}
+
 }

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\MeetingPictureRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[ORM\Entity(repositoryClass: MeetingPictureRepository::class)]
 class MeetingPicture
@@ -25,12 +26,12 @@ class MeetingPicture
         return $this->id;
     }
 
-    public function getPicture(): ?string
+    public function getPicture(): null|string|UploadedFile
     {
         return $this->picture;
     }
 
-    public function setPicture(string $picture): self
+    public function setPicture(null|string|UploadedFile $picture): self
     {
         $this->picture = $picture;
 

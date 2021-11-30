@@ -152,7 +152,53 @@
 		{% endif %}
 
 		{# <hr class="solid"> #}
-		
+
+		{% if meeting.date < date('now')%}
+			<div class="section mb-4">
+				<h2>Images de la journée découverte</h2>
+				
+				{% if isOrganiser %}
+					{{ form_start(formMeetingPicture, { attr : { 'class': 'mt-4' } }) }}
+						<div class="form-group col-md">
+							{{ form_label(formMeetingPicture.picture) }}
+							{{ form_widget(formMeetingPicture.picture) }}
+						</div>
+
+						<button class="btn btn-primary mt-4">Ajouter</button>
+					{{ form_end(formMeetingPicture) }}
+				{% endif %}
+
+				{% if meeting.meetingPictures|length > 0 %}
+					{% if isOrganiser %}
+						<hr class="solid mb-0">
+					{% endif %}
+					<div class="row mt-3">
+						{% for picture in meeting.meetingPictures %}
+							<div class="col-md-4 mb-3 d-flex align-items-stretch">
+								<div class="card w-100">
+									<img class="card-img-top"
+										src="{{ asset('img/' ~ picture.picture) }}"
+										alt="Card image cap"
+										style="object-fit: cover"
+										height='250'
+									/>
+									{% if isOrganiser %}
+										<div class="card-body d-flex justify-content-end">
+											<a class="btn btn-danger me-2" href="{{url('meeting.updatePictures', { id: picture.id})}}">Supprimer</a>
+										</div>
+									{% endif %}
+
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+
+				{% else %}
+					<hr class="solid mb-0">
+					<p class="mt-3">Il n'y a aucune image pour le moment.</p>
+				{% endif %}
+			</div>
+		{% endif %}
 	</div>
 	
 {% endblock %}
