@@ -23,12 +23,11 @@
 			<div class="row mt-3">
 				<div class="col-md-4">
 						<h1>{{ meeting.title }}</h1>
-						<p>Journée découverte proposé par {{ meeting.climber.lastname }} {{ meeting.climber.firstname }}</p>
-						<h4>Le {{ meeting.date | date("d/m/Y") }}</h4>
-						<h5>à {{ meeting.date | date("H:i") }}</h5>
+						<p>Journée découverte organisée par {{ meeting.climber.lastname }} {{ meeting.climber.firstname }}</p>
 						{% set remainingPlaces = meeting.LimitClimber - meeting.climberMeetings|length %}
 						<p>Nombre de places restantes: {{ remainingPlaces }} / {{ meeting.LimitClimber }}</p>
 				</div>
+				
 				<div class="col-md-4">
 					<img src="../icons/{{ meeting.level.name | lower }}.png" alt="" height="75" />
 				</div>
@@ -53,13 +52,17 @@
 			</div>
 
 			<div class="row mt-1">
-					<h2>Description</h2>
-					<p>{{ meeting.description }}</p>
+					<h2>Description de la Journée Découverte</h2>
+
+					<div class="ms-3">
+						<p><strong>Localisation:</strong> {{ meeting.location }}</p>
+						<p><strong>Date et Heure:</strong> {{ meeting.date|date("d/m/Y à H:i") }}</p>
+
+						<p>{{ meeting.description }}</p>
+					</div>
 			</div>
 
 			<div class="row mt-1">
-					<h2>Adresse</h2>
-					<p>{{ meeting.location }}</p>
 					<div id="map"></div>
 			</div>
 
